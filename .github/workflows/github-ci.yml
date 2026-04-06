@@ -105,6 +105,11 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
 
+      - name: Debug - check variables
+        run: |
+          echo "DOCKERHUB_NAME = ${{ vars.DOCKERHUB_NAME }}"
+          echo "DOCKERHUB_TOKEN length = ${{ secrets.DOCKERHUB_TOKEN != '' }}"
+
       - name: Download deb-package
         uses: actions/download-artifact@v4
         with:
