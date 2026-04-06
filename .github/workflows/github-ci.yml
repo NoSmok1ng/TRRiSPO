@@ -113,16 +113,16 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -t ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 -f cicd/Dockerfile .
-          docker tag ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 ${{ vars.DOCKER_USERNAME }}/latin-checker:latest
+          docker build -t ${{ vars.DOCKERHUB_NAME }}/latin-checker:1.0.0 -f cicd/Dockerfile .
+          docker tag ${{ vars.DOCKERHUB_NAME }}/latin-checker:1.0.0 ${{ vars.DOCKERHUB_NAME }}/latin-checker:latest
 
       - name: Run container
-        run: docker run ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0
+        run: docker run ${{ vars.DOCKERHUB_NAME }}/latin-checker:1.0.0
 
       - name: Log in to DockerHub
-        run: docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        run: docker login -u ${{ vars.DOCKERHUB_NAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push to DockerHub
         run: |
-          docker push ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0
-          docker push ${{ vars.DOCKER_USERNAME }}/latin-checker:latest
+          docker push ${{ vars.DOCKERHUB_NAME }}/latin-checker:1.0.0
+          docker push ${{ vars.DOCKERHUB_NAME }}/latin-checker:latest
