@@ -61,7 +61,7 @@ jobs:
         run: ./test.sh
         working-directory: ./cicd
 
-  Deploy:
+  Package:
     needs: Test
     runs-on: ubuntu-latest
 
@@ -85,7 +85,7 @@ jobs:
           path: usr/bin
 
       - name: Build package
-        run: ./deploy.sh "../latin-checker_1.0_amd64.deb"
+        run: ./package.sh "../latin-checker_1.0_amd64.deb"
         working-directory: ./cicd
 
       - name: Upload package
@@ -94,3 +94,34 @@ jobs:
           name: latin-checker-deb-package
           path: latin-checker_1.0_amd64.deb
 
+   Deploy:
+    needs: Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ensure docker is available
+        run: docker --version
+
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Download deb-package
+        uses: actions/download-artifact@v4
+        with:
+          name: latin-checker-deb-package
+          path: .
+
+      - name: Build docker image
+        run: |
+          docker build -t ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 -f cicd/Dockerfile .
+          docker tag ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 ${{ vars.DOCKER_USERNAME }}/latin-checker:latest
+
+      - name: Deploy on docker container
+        run: docker run ${{ vars.DOCKER_USERNAME }}/latin-checker "oh my god i cant believe this. yo i CANT believe this."
+
+      - name: Log in DockerHub
+        run: docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Deploy on DockerHub
+        run: |
+          docker push -a ${{ vars.DOCKER_USERNAME }}/latin-checker
