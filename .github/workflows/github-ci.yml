@@ -99,9 +99,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ensure docker is available
-        run: docker --version
-
       - name: Clone repo
         uses: actions/checkout@v4
 
@@ -112,16 +109,7 @@ jobs:
           path: ./
 
       - name: Build docker image
-        run: |
-          docker build -t ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 -f cicd/Dockerfile .
-          docker tag ${{ vars.DOCKER_USERNAME }}/latin-checker:1.0.0 ${{ vars.DOCKER_USERNAME }}/latin-checker:latest
+        run: docker build -t latin-checker:1.0.0 .
 
-      - name: Deploy on docker container
-        run: docker run ${{ vars.DOCKER_USERNAME }}/latin-checker "oh my god i cant believe this. yo i CANT believe this."
-
-      - name: Log in DockerHub
-        run: docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Deploy on DockerHub
-        run: |
-          docker push -a ${{ vars.DOCKER_USERNAME }}/latin-checker
+      - name: Run container
+        run: docker run latin-checker:1.0.0
