@@ -49,7 +49,7 @@ int main() {
         "НЕ ЯВЛЯЕТСЯ латинским квадратом"
         );
 
-    // Тест 6: Неправильный квадрат (число вне диапазона - меньше 1)
+    // Тест 6: Неправильный квадрат (число вне диапазона - 0)
     failed += run_test(
         "Тест 6: Латинский квадрат 3x3 (число 0 вне диапазона)",
         "3\n1 2 3\n2 0 1\n3 1 2\n",
@@ -63,7 +63,7 @@ int main() {
         "ЯВЛЯЕТСЯ латинским квадратом"
         );
 
-    // Тест 8: Минимальный размер 1x1 (всегда латинский квадрат)
+    // Тест 8: Минимальный размер 1x1
     failed += run_test(
         "Тест 8: Латинский квадрат 1x1 (корректный)",
         "1\n1\n",
@@ -89,17 +89,14 @@ int main() {
 
     if (failed == 0) {
         cout << "✅ Все тесты пройдены успешно!" << endl;
-        cout << "   Программа работает корректно." << endl;
         return 0;
     } else {
         cout << "❌ Провалено тестов: " << failed << endl;
-        cout << "   Исправьте ошибки и запустите тесты снова." << endl;
         return 1;
     }
 }
 
 string run_program(string input) {
-    // Путь к вашей программе (относительно папки cicd)
     string command = "echo \"" + input + "\" | ../usr/bin/latin-checker";
 
     FILE* pipe = popen(command.c_str(), "r");
@@ -120,7 +117,6 @@ string run_program(string input) {
 int run_test(string name, string input, string expected) {
     string output = run_program(input);
 
-    // Проверяем, содержится ли ожидаемый текст в выводе
     if (output.find(expected) != string::npos) {
         cout << "✅ " << name << " - ПРОЙДЕН" << endl;
         return 0;
@@ -128,9 +124,7 @@ int run_test(string name, string input, string expected) {
         cout << "❌ " << name << " - ПРОВАЛЕН" << endl;
         cout << "   Ожидалось: \"" << expected << "\"" << endl;
 
-        // Показываем первые 150 символов вывода для отладки
         string short_output = output.substr(0, 150);
-        // Заменяем переносы строк на \n для читаемости
         size_t pos;
         while ((pos = short_output.find('\n')) != string::npos) {
             short_output.replace(pos, 1, "\\n");
