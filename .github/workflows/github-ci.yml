@@ -23,11 +23,14 @@ jobs:
         run: ./build.sh
         working-directory: ./cicd
       
+      - name: Verify binary exists
+        run: test -f usr/bin/trrispo && echo "✅ Binary found" || (echo "❌ Binary missing" && exit 1)
+      
       - name: Upload binary to artifact
         uses: actions/upload-artifact@v4
         with:
           name: trrispo-binary
-          path: usr/bin/trrispo
+          path: usr/
           retention-days: 1
 
   Test:
@@ -50,11 +53,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: trrispo-binary
-          path: usr/bin
+          path: .
+      
+      - name: List downloaded files
+        run: ls -la usr/bin/
       
       - name: Give permissions to binary
-        run: chmod +x trrispo
-        working-directory: ./usr/bin
+        run: chmod +x usr/bin/trrispo
       
       - name: Run tests
         run: ./test.sh
@@ -80,7 +85,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: trrispo-binary
-          path: usr/bin
+          path: .
       
       - name: Build deb package
         run: ./deploy.sh "../trrispo_1.0_linux_amd64.deb"
