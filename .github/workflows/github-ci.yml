@@ -2,65 +2,60 @@ name: CI-Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: main
   pull_request:
-    branches: [ main ]
+    branches: main
 
 jobs:
   Build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential g++ make
-      
+
       - name: Build program
         run: ./build.sh
         working-directory: ./cicd
-      
-      - name: Verify binary exists
-        run: test -f usr/bin/trrispo && echo "✅ Binary found" || (echo "❌ Binary missing" && exit 1)
-      
+
       - name: Upload binary to artifact
         uses: actions/upload-artifact@v4
         with:
-          name: trrispo-binary
-          path: usr/
+          name: latin-checker-binary
+          path: usr/bin/latin-checker
           retention-days: 1
 
   Test:
     needs: Build
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential g++ make
-      
+
       - name: Create usr/bin directory
         run: mkdir -p usr/bin
-      
+
       - name: Download binary from artifact
         uses: actions/download-artifact@v4
         with:
-          name: trrispo-binary
-          path: .
-      
-      - name: List downloaded files
-        run: ls -la usr/bin/
-      
+          name: latin-checker-binary
+          path: usr/bin
+
       - name: Give permissions to binary
-        run: chmod +x usr/bin/trrispo
-      
+        run: chmod +x latin-checker
+        working-directory: ./usr/bin
+
       - name: Run tests
         run: ./test.sh
         working-directory: ./cicd
@@ -68,31 +63,31 @@ jobs:
   Deploy:
     needs: Test
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y dpkg-dev
-      
+
       - name: Create usr/bin directory
         run: mkdir -p usr/bin
-      
+
       - name: Download binary from artifact
         uses: actions/download-artifact@v4
         with:
-          name: trrispo-binary
-          path: .
-      
+          name: latin-checker-binary
+          path: usr/bin
+
       - name: Build deb package
-        run: ./deploy.sh "../trrispo_1.0_linux_amd64.deb"
+        run: ./deploy.sh "../latin-checker_1.0_amd64.deb"
         working-directory: ./cicd
-      
+
       - name: Upload deb package
         uses: actions/upload-artifact@v4
         with:
-          name: trrispo-deb-package
-          path: trrispo_1.0_linux_amd64.deb
+          name: latin-checker-deb-package
+          path: latin-checker_1.0_amd64.deb
