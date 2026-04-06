@@ -97,7 +97,8 @@ int main() {
 }
 
 string run_program(string input) {
-    string command = "echo \"" + input + "\" | ../usr/bin/latin-checker";
+    // Используем printf для правильной передачи переносов строк
+    string command = "printf \"" + input + "\" | ../usr/bin/latin-checker";
 
     FILE* pipe = popen(command.c_str(), "r");
     if (!pipe) {
@@ -124,12 +125,9 @@ int run_test(string name, string input, string expected) {
         cout << "❌ " << name << " - ПРОВАЛЕН" << endl;
         cout << "   Ожидалось: \"" << expected << "\"" << endl;
 
-        string short_output = output.substr(0, 150);
-        size_t pos;
-        while ((pos = short_output.find('\n')) != string::npos) {
-            short_output.replace(pos, 1, "\\n");
-        }
-        cout << "   Получено: \"" << short_output << "...\"" << endl;
+        // Показываем первые 200 символов вывода
+        string short_output = output.substr(0, 200);
+        cout << "   Получено: \"" << short_output << "\"" << endl;
         return 1;
     }
 }
