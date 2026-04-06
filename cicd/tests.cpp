@@ -54,7 +54,7 @@ int main() {
 
 string run_program(string input) {
     // Путь к вашей программе
-    string command = "echo \"" + input + "\" | ../usr/bin/trrispo";
+    string command = "echo \"" + input + "\" | ../usr/bin/latin-checker";
 
     FILE* pipe = popen(command.c_str(), "r");
     if (!pipe) {
