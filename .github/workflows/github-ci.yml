@@ -106,10 +106,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: latin-checker-deb-package
-          path: latin-checker_1.0_amd64.deb
+          path: ./
 
       - name: Build docker image
-        run: docker build -t latin-checker:1.0.0 .
+        run: docker build -t latin-checker:1.0.0 -f cicd/Dockerfile .
 
       - name: Run container
         run: docker run latin-checker:1.0.0
