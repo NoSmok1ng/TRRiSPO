@@ -1,2 +1,2 @@
 all:
-	g++ -o hello main.cpp  
+	g++ -o latin-checker main.cpp  
