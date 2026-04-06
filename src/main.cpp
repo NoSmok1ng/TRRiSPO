@@ -112,81 +112,63 @@ int main(int argc, char *argv[])
 {
     setlocale(LC_ALL, "Russian");
 
-    string input_raw;
-
-    // Режим 1: аргумент командной строки
-    if (argc == 2) {
-        input_raw = argv[1];
-    }
-    // Режим 2: чтение из pipe или перенаправления
-    else if (argc == 1 && !isatty(STDIN_FILENO)) {
-        getline(cin, input_raw);
-    }
-    // Режим 3: интерактивный режим
-    else if (argc == 1 && isatty(STDIN_FILENO)) {
-        cout << "=== Программа проверки латинского квадрата ===" << endl;
-        cout << "Латинский квадрат порядка n — это матрица n x n," << endl;
-        cout << "в которой каждая строка и каждый столбец содержат все числа от 1 до n." << endl;
-
+    // Режим 1: Чтение из pipe или перенаправления (для тестов)
+    if (!isatty(STDIN_FILENO)) {
         int size;
-        cout << "\nВведите порядок матрицы n (от 1 до 100): ";
-        size = inputNumber("n = ");
+        cin >> size;
 
+        if (size < 1 || size > 100) {
+            cerr << "Ошибка: размер должен быть от 1 до 100" << endl;
+            return 1;
+        }
+
+        // Создание матрицы
         int** matrix = new int*[size];
         for (int i = 0; i < size; i++) {
             matrix[i] = new int[size];
         }
 
-        inputMatrixInteractive(matrix, size, "M");
+        // Чтение матрицы
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                cin >> matrix[i][j];
+            }
+        }
+
+        // Проверка
         checkLatinSquare(matrix, size, "M");
 
+        // Освобождение памяти
         for (int i = 0; i < size; i++) {
             delete[] matrix[i];
         }
         delete[] matrix;
 
-        cout << "\nПрограмма завершена." << endl;
         return 0;
     }
-    else if (argc > 2) {
-        cout << "Ошибка: слишком много аргументов. Использование: latin-checker <строка с данными>" << endl;
-        return 1;
-    }
 
-    // Парсим входные данные для пакетного режима
-    istringstream iss(input_raw);
+    // Режим 2: Интерактивный режим
+    cout << "=== Программа проверки латинского квадрата ===" << endl;
+    cout << "Латинский квадрат порядка n — это матрица n x n," << endl;
+    cout << "в которой каждая строка и каждый столбец содержат все числа от 1 до n." << endl;
+
     int size;
-    iss >> size;
+    cout << "\nВведите порядок матрицы n (от 1 до 100): ";
+    size = inputNumber("n = ");
 
-    if (size < 1 || size > 100) {
-        cerr << "Ошибка: размер должен быть от 1 до 100" << endl;
-        return 1;
-    }
-
-    // Создание матрицы
     int** matrix = new int*[size];
     for (int i = 0; i < size; i++) {
         matrix[i] = new int[size];
     }
 
-    // Чтение матрицы
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (!(iss >> matrix[i][j])) {
-                cerr << "Ошибка: неверный формат матрицы" << endl;
-                return 1;
-            }
-        }
-    }
-
-    // Проверка
+    inputMatrixInteractive(matrix, size, "M");
     checkLatinSquare(matrix, size, "M");
 
-    // Освобождение памяти
     for (int i = 0; i < size; i++) {
         delete[] matrix[i];
     }
     delete[] matrix;
 
+    cout << "\nПрограмма завершена." << endl;
     return 0;
 }
