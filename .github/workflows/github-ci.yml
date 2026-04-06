@@ -121,7 +121,7 @@ jobs:
           echo "3\n1 2 3\n2 3 1\n3 1 2" | docker run -i nosmok1ng/latin-checker:1.0.0
 
       - name: Log in to DockerHub
-        run: docker login -u ${{ vars.DOCKERHUB_NAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+        run: docker login -u ${{ secrets.DOCKERHUB_NAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push to DockerHub
         run: |
