@@ -1,0 +1,8 @@
+app:
+  name: latin-checker
+
+image:
+  name: nosmok1ng/latin-checker-minikube
+  tag: latest
+
+replicaCount: 1
